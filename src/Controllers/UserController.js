@@ -1,5 +1,5 @@
 const Users = require('../Models/UserSchema');
-// const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const {
     hashPass
@@ -11,14 +11,15 @@ const getUsers = async (req, res) => {
 
 const createUser = async (req, res) => {
     const {
-        username, email, pass
+        username, email, pass, role
     } = req.body;
 
     try {
         const newUser = await Users.create({
             username,
             email,
-            pass: await hashPass(pass)
+            pass: await hashPass(pass),
+            role
         });
         return res.json(newUser);
     } catch (err) {
@@ -32,16 +33,15 @@ const login = async (req, res) => {
         return res.json({ "message": "The user does not exist" });
     }
     if (await bcrypt.compare(req.body.pass, user.pass)) {
-        // const { id } = user;
-        // const token = jwt.sign({ id }, process.env.SECRET, {
-        //     expiresIn: 43200,
-        // });
+        const { id } = user;
+        const token = jwt.sign({ id }, process.env.SECRET, {
+            expiresIn: 43200,
+        });
         const profile = { ...user._doc };
         delete profile.pass;
-        // return res.json({ auth: true, token, profile });
-        return res.json({ auth: true, profile });
+        return res.json({ auth: true, token, profile });
     }
-    return res.json({ "message": "incorrect password" });
+    return res.json({ message: "incorrect password" });
 }
 
 const updateUser = async (req, res) => {
@@ -68,6 +68,7 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     const { id } = req.params;
+    console.log(id);
 
     const deletedUser = Users.findOneAndDelete({ _id: id });
     return res.json(deletedUser);

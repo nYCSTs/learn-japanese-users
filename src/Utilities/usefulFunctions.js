@@ -10,7 +10,7 @@ const verifyJWT = (req, res, next) => {
     const token = req.headers['x-access-token'];
 
     if (!token)  {
-        return res.status(401).json({ "err": "no token was provided. "});
+        return res.status(401).json({ "err": "no token was provided." });
     }
 
     return jwt.verify(token, process.env.SECRET, (err, decoded) => {
@@ -24,5 +24,5 @@ const verifyJWT = (req, res, next) => {
 }
 
 module.exports = {
-    hashPass,
+    hashPass, verifyJWT,
 };
