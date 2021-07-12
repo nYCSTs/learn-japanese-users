@@ -8,5 +8,6 @@ routes.post('/login', UserController.login);
 routes.post('/register', UserController.createUser);
 routes.put('/user/update/:id', UserController.updateUser);
 routes.delete('/user/delete/:id', UserController.deleteUser);
+routes.put('/add-count/:id', UserController.addTestCount);
 
 module.exports = routes;

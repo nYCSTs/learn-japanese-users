@@ -5,6 +5,20 @@ const {
     hashPass
 } = require('../Utilities/usefulFunctions');
 
+const addTestCount = async (req, res) => {
+    const { id } = req.params;
+    const { count } = req.body;
+
+    try {
+        const updatedUser = await Users.findOneAndUpdate({ _id: id }, {
+            testesSemanais: count
+        }, { new: true });
+        return res.json(updatedUser);
+    } catch (err) {
+        return res.json(err);
+    }
+}
+
 const getUsers = async (req, res) => {
     return res.json(await Users.find());
 };
@@ -75,5 +89,5 @@ const deleteUser = async (req, res) => {
 };
 
 module.exports = {
-    getUsers, createUser, login, updateUser, deleteUser
+    getUsers, createUser, login, updateUser, deleteUser, addTestCount
 }
