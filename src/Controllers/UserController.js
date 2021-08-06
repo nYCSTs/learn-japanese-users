@@ -37,6 +37,9 @@ const createUser = async (req, res) => {
         });
         return res.json(newUser);
     } catch (err) {
+        if (err.code === 11000) {
+            return res.json({ 'err': 'duplicated' });
+        }
         return res.json(err);
     };
 }
@@ -82,10 +85,16 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     const { id } = req.params;
-    console.log(id);
 
-    const deletedUser = Users.findOneAndDelete({ _id: id });
-    return res.json(deletedUser);
+    try {
+        const deletedUser = await Users.deleteOne({ _id: id });
+        if (deleteUser.deletedCount == 1) {
+            return res.json({ 'message': 'ok' })
+        } 
+        return res.json({ 'message': 'error when deleting user' })
+    } catch (err) {
+        return res.json({err});
+    }
 };
 
 module.exports = {
